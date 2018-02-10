@@ -1,9 +1,9 @@
 local program = { args = {} }
-local readFile = readFile
-local getParentDirectory = getParentDirectory
+local getFile = getFile
+local getDirectory = getDirectory
 
 local dir = {}
-local filename = {}
+local filename = ""
 local content = {}
 local contentStr = ""
 local contentDirty = false
@@ -15,9 +15,9 @@ function program:onEnter()
     if #self.args < 1 then
         Terminal:endProg(-1, "EDIT REQUIRES 1 PARAMETER: <FILE>")
     else
-        local text, path = readFile(Terminal.workingDirPath, self.args[1])
-        dir = getParentDirectory(table.concat(path))
-        filename = path[#path]
+        local text, path = getFile(Terminal.ip, Terminal.workingDirPath, self.args[1])
+        dir = getDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1] .. "/..")
+        filename = getFilename(Terminal.workingDirPath, self.args[1])
         if not text then
             dir[filename] = ""
         else

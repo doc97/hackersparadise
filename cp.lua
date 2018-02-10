@@ -1,13 +1,13 @@
 local program = { args = {} }
-local getDirectory = getDirectory
+local getFileOrDirectory = getFileOrDirectory
 local getFilename = getFilename
 
 function program:onEnter()
     if #self.args < 2 then
         Terminal:endProg(-1, "CP REQUIRES 2 PARAMETERS: <SRC> <DST>")
     else
-        local src, srcPath = getDirectory(Terminal.workingDirPath, self.args[1])
-        local parent, parentPath = getDirectory(Terminal.workingDirPath, self.args[2] .. "/..")
+        local src, srcPath = getFileOrDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1])
+        local parent, parentPath = getFileOrDirectory(Terminal.ip, Terminal.workingDirPath, self.args[2] .. "/..")
         local target = getFilename(Terminal.workingDirPath, self.args[2])
         if not src then
             Terminal:endProg(-1, "NO SUCH FILE OR DIRECTORY")
@@ -15,14 +15,22 @@ function program:onEnter()
             Terminal:endProg(-1, "INVALID DESTINATION")
         elseif not parent[target] then
             local copy = {}
-            for k,v in pairs(src) do copy[k] = v end
-            parent[target] = copy
+            if type(src) == "table" then
+                for k,v in pairs(src) do copy[k] = v end
+                parent[target] = copy
+            else
+                parent[target] = src
+            end
             Terminal:endProg()
         elseif type(parent[target]) ~= "table" then
             Terminal:endProg(-1, "CANNOT OVERWRITE NON-DIRECTORY")
         else
             local copy = {}
-            for k,v in pairs(src) do copy[k] = v end
+            if type(src) == "table" then
+                for k,v in pairs(src) do copy[k] = v end
+            else
+                copy = src
+            end
 
             local cpy = getFilename("/", table.concat(srcPath))
             parent[target][cpy] = copy

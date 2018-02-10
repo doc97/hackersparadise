@@ -75,7 +75,7 @@ function Terminal:continueGame()
         self:newGame()
     else
         for ip,sys in pairs(Systems) do
-            if not fileExists(ip, "/", "BOOT/BOOT.CFG") or not fileExists(ip, "/", "BOOT/SYSTEM.IMG") then sys.online = "false" end
+            if not getFile(ip, "/", "BOOT/BOOT.CFG") or not getFile(ip, "/", "BOOT/SYSTEM.IMG") then sys.online = "false" end
         end
     end
 end

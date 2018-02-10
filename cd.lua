@@ -9,7 +9,7 @@ function program:onEnter()
         return
     end
 
-    local dir, dirPath = getDirectory(Terminal.workingDirPath, self.args[1])
+    local dir, dirPath = getDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1])
     if not dir then
         Terminal:endProg(-1, "NO SUCH DIRECTORY")
     else

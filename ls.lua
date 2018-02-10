@@ -1,10 +1,11 @@
 local program = { args = {} }
+local getDirectory = getDirectory
 
 function program:onEnter()
     local dir, dirPath = Terminal.workingDir, Terminal.workingDirPath
     if #self.args > 0 then
-        dir, dirPath = getDirectory(dirPath, self.args[1])
-        if not dir or not dirPath then
+        dir, dirPath = getDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1])
+        if not dir then
             Terminal:endProg(-1, "NO SUCH DIRECTORY")
             return
         end

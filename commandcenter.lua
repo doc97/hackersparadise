@@ -100,7 +100,7 @@ function CC:update(dt)
     -- Rebooting systems
     for i = 1, #Env.reboot, 1 do
         local sys = Env.reboot[i]
-        if not fileExists(sys.ip, "/", "BOOT/BOOT.CFG") or not fileExists(sys.ip, "/", "BOOT/SYSTEM.IMG") then
+        if not getFile(sys.ip, "/", "BOOT/BOOT.CFG") or not getFile(sys.ip, "/", "BOOT/SYSTEM.IMG") then
             Systems[sys.ip].online = "false"
             table.remove(Env.reboot, i)
             i = i - 1

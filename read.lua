@@ -1,11 +1,11 @@
 local program = { args = {} }
-local readFile = readFile
+local getFile = getFile
 
 function program:onEnter()
     if #self.args < 1 then
         Terminal:endProg(-1, "READ REQUIRES 1 PARAMETER: <FILE>")
     else
-        local file = readFile(Terminal.workingDirPath, self.args[1])
+        local file = getFile(Terminal.ip, Terminal.workingDirPath, self.args[1])
         if not file then
             Terminal:endProg(-1, "NO SUCH FILE EXISTS")
         else

@@ -1,4 +1,9 @@
-function resolvePath(path, str)
+local function getParentDirectoryPath(path)
+    local index = string.find(path, "/[^/]+/?$") or 1
+    return string.sub(path, 1, index)
+end
+
+local function resolvePath(path, str)
     local res = "" .. path or ""
     local c = "" .. str or ""
     while #c > 0 do
@@ -16,15 +21,7 @@ function resolvePath(path, str)
     return res
 end
 
-function readFile(start, path)
-    local exists, d, p = fileExists(Terminal.ip, start, path)
-    p[#p] = nil
-
-    if not exists or type(d) == "table" then return nil, p end
-    return d, p
-end
-
-function fileExists(ip, start, path)
+local function fileExists(ip, start, path)
     local pStr = resolvePath(start, path)
     local d = Systems[ip].fs
     local p = { "/" }
@@ -45,30 +42,22 @@ function fileExists(ip, start, path)
     return exists, d, p
 end
 
-function getDirectory(start, path)
-    local pStr = resolvePath(start, path)
-    local d = Systems[Terminal.ip].fs
-    local p = { "/" }
+function getFile(ip, start, path)
+    local exists, d, p = fileExists(ip, start, path)
+    if exists == true and (type(d) ~= "table") then return d, p
+    else return nil end
+end
 
-    for match in string.gmatch(pStr, "[^/]+") do
-        if d[match] and type(d[match]) == "table" then
-            d = d[match]
-            p[#p + 1] = match
-            p[#p + 1] = "/"
-        else
-            return nil
-        end
-    end
+function getDirectory(ip, start, path)
+    local exists, d, p = fileExists(ip, start, path)
+    if exists and type(d) == "table" then return d, p else return nil end
+end
+
+function getFileOrDirectory(ip, start, path)
+    local exists, d, p = fileExists(ip, start, path)
+    if not exists then return nil end
+    if type(d) ~= "table" then p[#p] = nil end
     return d, p
-end
-
-function getParentDirectory(path)
-    return getDirectory("/", path .. "/..")
-end
-
-function getParentDirectoryPath(path)
-    local index = string.find(path, "/[^/]+/?$") or 1
-    return string.sub(path, 1, index)
 end
 
 function getFilename(start, path)
