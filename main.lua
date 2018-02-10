@@ -15,6 +15,8 @@ function love.load()
     Fonts["bold-48"] = love.graphics.newFont("assets/8bit-Bold.ttf", 48)
 
     love.window.setTitle("NERDConsole")
+    love.keyboard.setKeyRepeat(true)
+
     CurrentScreen = Screens["mainmenu"]
     CurrentScreen:onEnter()
 end

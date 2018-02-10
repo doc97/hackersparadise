@@ -37,6 +37,8 @@ WHOAMI - SHOWS THE CURRENT USERNAME
 local blinkTimer = 0
 local cursorVisible = false;
 
+local cmdStack = {}
+local cmdIndex = 1
 local input = {}
 local inputStr = ""
 local inputDirty = false
@@ -68,6 +70,7 @@ function program:reset()
 end
 
 function program:onEnter()
+    cmdStack = {}
     self:reset()
 end
 
@@ -138,12 +141,30 @@ function program:keypressed(key)
     if key == "backspace" then
         input[#input] = nil
         inputDirty = true
-    elseif key == "right" or key == "down" then
+    elseif key == "right" then
         page = (page + 1)
         if page > pageCount then page = 1 end
-    elseif key == "left" or key == "up" then
-        page = (page - 1) % pageCount
-        if page < 1 then page = pageCount end
+    elseif key == "left" then
+        if pageCount > 0 then
+            page = (page - 1) % pageCount
+            if page < 1 then page = pageCount end
+        end
+    elseif key == "up" then
+        if cmdIndex < #cmdStack then
+            cmdIndex = cmdIndex + 1
+            local cmdStr = cmdStack[cmdIndex]
+            input = {}
+            for char in string.gmatch(cmdStr, ".") do input[#input + 1] = char end
+            inputDirty = true
+        end
+    elseif key == "down" then
+        if cmdIndex > 0 then
+            cmdIndex = cmdIndex - 1
+            local cmdStr = cmdIndex > 0 and cmdStack[cmdIndex] or ""
+            input = {}
+            for char in string.gmatch(cmdStr, ".") do input[#input + 1] = char end
+            inputDirty = true
+        end
     elseif key == "return" then
         output = {}
         local s = {}
@@ -152,6 +173,10 @@ function program:keypressed(key)
         local cmd = s[1]
         local args = {}
         for i = 2, #s, 1 do args[i - 1] = s[i] end
+
+        table.insert(cmdStack, 1, cmd)
+        if #cmdStack > 10 then cmdStack[#cmdStack] = nil end
+        cmdIndex = 0
 
         if cmd == "ADDUSER" then Terminal:runProg("adduser")
         elseif cmd == "ADDNOTE" then Terminal:runProg("addnote", args)
