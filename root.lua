@@ -31,6 +31,7 @@ PS - LIST PROCESSES
 READ - READ THE CONTENTS OF A FILE
 RM - REMOVE FILE OR DIRECTORY
 SCAN - SCAN A SYSTEM FOR OPEN PORTS
+SCP - SECURE COPY FILES TO ROOT SYSTEM
 SEARCH - SEARCH FOR NEIGHBOURING SYSTEMS
 START - START A PROCESS
 WHOAMI - SHOWS THE CURRENT USERNAME
@@ -217,6 +218,7 @@ function program:keypressed(key)
         elseif cmd == "READ" then Terminal:runProg("read", args)
         elseif cmd == "RM" then Terminal:runProg("rm", args)
         elseif cmd == "SCAN" then Terminal:runProg("scan", args)
+        elseif cmd == "SCP" then Terminal:runProg("scp", args)
         elseif cmd == "SEARCH" then Terminal:runProg("search")
         elseif cmd == "START" then Terminal:runProg("start", args)
         elseif cmd == "WHOAMI" then self:setOutput(Terminal.username)

@@ -45,6 +45,7 @@ local programs = {
     ["read"] = dofile("read.lua"),
     ["rm"] = dofile("rm.lua"),
     ["scan"] = dofile("scan.lua"),
+    ["scp"] = dofile("scp.lua"),
     ["search"] = dofile("search.lua"),
     ["start"] = dofile("start.lua")
 }
