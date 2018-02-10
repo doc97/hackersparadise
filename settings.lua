@@ -82,5 +82,6 @@ DefaultSystems = {
 Settings = { }
 
 DefaultSettings = {
+    ["aliases"] = { },
     ["showNotes"] = "true"
 }

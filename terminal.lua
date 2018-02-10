@@ -19,6 +19,7 @@ local progStack = Stack.new()
 local programs = {
     ["adduser"] = dofile("adduser.lua"),
     ["addnote"] = dofile("addnote.lua"),
+    ["alias"] = dofile("alias.lua"),
     ["boot"] = dofile("boot.lua"),
     ["cd"] = dofile("cd.lua"),
     ["color"] = dofile("color.lua"),

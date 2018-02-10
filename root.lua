@@ -3,6 +3,7 @@ local program = { args = {} }
 local HELP_MSG = [[
 ADDUSER - INTERACTIVELY ADD A USER
 ADDNOTE - ADD A NOTE
+ALIAS - CREATE AN ALIAS FOR A STRING
 CD - CHANGE DIRECTORY
 CLEAR - CLEAR OUTPUT BUFFER
 COLOR - SHOW OR SET SYSTEM COLOR
@@ -172,7 +173,14 @@ function program:keypressed(key)
 
         local cmd = s[1]
         local args = {}
-        for i = 2, #s, 1 do args[i - 1] = s[i] end
+        for i = 2, #s, 1 do
+            local arg = s[i]
+            for match in string.gmatch(arg, "%b{}") do
+                local alias = Settings.aliases[string.sub(match, 2, -2)]
+                if alias then arg = string.gsub(arg, match, alias) end
+            end
+            args[i - 1] = arg
+        end
 
         table.insert(cmdStack, 1, table.concat(input))
         if #cmdStack > 10 then cmdStack[#cmdStack] = nil end
@@ -180,6 +188,7 @@ function program:keypressed(key)
 
         if cmd == "ADDUSER" then Terminal:runProg("adduser")
         elseif cmd == "ADDNOTE" then Terminal:runProg("addnote", args)
+        elseif cmd == "ALIAS" then Terminal:runProg("alias", args)
         elseif cmd == "CD" then Terminal:runProg("cd", args)
         elseif cmd == "CLEAR" then self:setOutput("")
         elseif cmd == "COLOR" then Terminal:runProg("color", args)
