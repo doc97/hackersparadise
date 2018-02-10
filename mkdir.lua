@@ -1,4 +1,6 @@
 local program = { args = {} }
+local getDirectory = getDirectory
+local getFilename = getFilename
 
 function program:onEnter()
     if #self.args < 1 then
@@ -9,7 +11,9 @@ function program:onEnter()
     if dir then
         Terminal:endProg(-1, "DIRECTORY ALREADY EXISTS")
     else
-        dir = { }
+        local name = getFilename(Terminal.workingDirPath, self.args[1])
+        local parent = getDirectory(Terminal.workingDirPath, self.args[1] .. "/..")
+        parent[name] = { }
         Terminal:endProg()
     end
 end

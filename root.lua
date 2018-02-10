@@ -174,7 +174,7 @@ function program:keypressed(key)
         local args = {}
         for i = 2, #s, 1 do args[i - 1] = s[i] end
 
-        table.insert(cmdStack, 1, cmd)
+        table.insert(cmdStack, 1, table.concat(input))
         if #cmdStack > 10 then cmdStack[#cmdStack] = nil end
         cmdIndex = 0
 
