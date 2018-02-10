@@ -5,7 +5,9 @@ function program:onEnter()
     if #self.args < 1 then
         Terminal:endProg(-1, "SCAN REQUIRES 1 PARAMETER: <IP>")
     elseif not Systems[self.args[1]] then
-        Terminal:endProg(-1, "COULD NOT SCAN SYSTEM AT IP: " .. self.args[1])
+        Terminal:endProg(-1, "NO SYSTEM WITH IP: " .. self.args[1])
+    elseif Systems[self.args[1]].online ~= "true" then
+        Terminal:endProg(-1, "SYSTEM IS OFFLINE")
     else
         local strBuf = { "LIST OF PORTS\n-------------" }
         for key, value in pairs(Systems[self.args[1]].ports) do

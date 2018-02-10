@@ -52,8 +52,8 @@ local programs = {
 function Terminal:newGame()
     Systems = DefaultSystems
     Settings = DefaultSettings
+    Env = DefaultEnv
 
-    -- Start processes
     for ip,sys in pairs(Systems) do
         if not CC:hasProcessWithPID(ip, 0) then CC:startProcess(ip, "ROOT", 0) end
         if sys.firewall > 0 then CC:startProcess(ip, "FIREWALL") end
@@ -66,12 +66,17 @@ function Terminal:newGame()
 end
 
 function Terminal:continueGame()
-    local err1, err2
+    local err1, err2, err3
     Systems, err1 = table.load("systems-save.lua")
     Settings, err2 = table.load("settings-save.lua")
+    Env, err3 = table.load("env-save.lua")
 
-    if err1 or err2 then
-        newGame()
+    if err1 or err2 or err3 then
+        self:newGame()
+    else
+        for ip,sys in pairs(Systems) do
+            if not fileExists(ip, "/", "BOOT/BOOT.CFG") or not fileExists(ip, "/", "BOOT/SYSTEM.IMG") then sys.online = "false" end
+        end
     end
 end
 

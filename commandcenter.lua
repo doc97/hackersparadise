@@ -3,6 +3,11 @@ CC = {
     ["ids"] = { }
 }
 
+Env = { }
+DefaultEnv = {
+    ["reboot"] = { }
+}
+
 -- IDS
 function CC:isBeingDetected(system)
     for ip, ids in pairs(self.ids) do
@@ -49,10 +54,14 @@ end
 function CC:killProcess(ip, pid)
     if Systems[ip].processes[tostring(pid)] then
         Systems[ip].processes[tostring(pid)] = nil
-        print("Killed process with PID: " .. pid)
-        return true
+        if pid == 0 then
+            Env.reboot[#Env.reboot + 1] = { ["ip"] = ip, ["timer"] = 20 }
+            Systems[ip].online = "false"
+
+            if ip == Terminal.rootIp then Terminal:endProg()
+            elseif ip == Terminal.ip then Terminal:runProg("disconnect") end
+        end
     end
-    return false
 end
 
 -- Mail
@@ -68,6 +77,7 @@ function CC:sendMail(subj, msg, sender)
 end
 
 function CC:update(dt)
+    -- IDS
     if self.idsCount > 0 then
         for ip, ids in pairs(self.ids) do
             if ids then
@@ -83,6 +93,24 @@ function CC:update(dt)
                     self.idsCount = self.idsCount - 1
                     love.event.quit()
                 end
+            end
+        end
+    end
+
+    -- Rebooting systems
+    for i = 1, #Env.reboot, 1 do
+        local sys = Env.reboot[i]
+        if not fileExists(sys.ip, "/", "BOOT/BOOT.CFG") or not fileExists(sys.ip, "/", "BOOT/SYSTEM.IMG") then
+            Systems[sys.ip].online = "false"
+            table.remove(Env.reboot, i)
+            i = i - 1
+        else
+            sys.timer = sys.timer - dt
+            if sys.timer < 0 then
+                Systems[sys.ip].online = "true"
+                Systems[sys.ip].processes["0"] = "ROOT"
+                table.remove(Env.reboot, i)
+                i = i - 1
             end
         end
     end

@@ -2,6 +2,7 @@ Systems = { }
 
 DefaultSystems = {
     ["192.168.1.1"] = {
+        ["online"] = "true",
         ["name"] = "HOME",
         ["owner"] = "ADMIN",
         ["accounts"] = {
@@ -37,10 +38,11 @@ DefaultSystems = {
         },
         ["mail"] = { },
         ["color"] = { 50, 255, 50 },
-        ["firewall"] = 10,
-        ["ids"] = 10
+        ["firewall"] = 50,
+        ["ids"] = 15
     },
     ["192.168.1.2"] = {
+        ["online"] = "true",
         ["name"] = "JOHN'S PC",
         ["owner"] = "JOHN",
         ["accounts"] = {

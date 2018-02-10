@@ -5,7 +5,8 @@ local ERROR_TIME = 2
 local blinkTimer = 0
 local errorTimer = 0
 local cursorVisible = false
-local errorVisible = false
+local authFailed = false
+local sysOffline = false
 local usernameEntered = false
 
 local cmd = ""
@@ -17,7 +18,8 @@ function program:reset()
     blinkTimer = 0
     errorTimer = 0
     cursorVisible = false
-    errorVisible = false
+    authFailed = false
+    sysOffline = false
     usernameEntered = false
     cmd = ""
     username = ""
@@ -39,11 +41,11 @@ function program:update(dt)
         cursorVisible = not cursorVisible
     end
 
-    if errorVisible then errorTimer = errorTimer + dt end
+    if authFailed or sysOffline then errorTimer = errorTimer + dt end
     if errorTimer > ERROR_TIME then
         errorTimer = 0
-        errorVisible = false
-        love.keyboard.setTextInput(true)
+        authFailed = false
+        sysOffline = false
     end
 
 end
@@ -51,8 +53,10 @@ end
 function program:draw()
     love.graphics.setFont(Fonts["bold-16"])
     love.graphics.setColor(255, 255, 255)
-    if errorVisible then
+    if authFailed then
         love.graphics.printf("** INCORRECT LOGIN, ACCESS DENIED **", 0, 66, love.graphics.getWidth(), "center")
+    elseif sysOffline then
+        love.graphics.printf("** SYSTEM OFFLINE **", 0, 66, love.graphics.getWidth(), "center")
     else
         if usernameEntered then
             love.graphics.print("LOGIN: " .. username, 16, 16)
@@ -64,7 +68,7 @@ function program:draw()
 end
 
 function program:keypressed(key)
-    if errorVisible then return end
+    if authFailed or sysOffline then return end
 
     if key == "backspace" then
         cmd = cmd:sub(1, -2)
@@ -73,14 +77,16 @@ function program:keypressed(key)
         if usernameEntered then
             local sys = Systems[Terminal.rootIp]
             local acc = sys and sys.accounts[username] or nil
-            if acc and acc.passwd == passwd and username == Terminal.rootUsername then
+
+            if not acc or acc.passwd ~= passwd or username ~= Terminal.rootUsername then
+                authFailed = true
+            elseif sys.online ~= "true" then
+                sysOffline = true
+            else
                 Terminal.username = username
                 Terminal.workingDir = Systems[Terminal.ip].fs
                 Terminal.workingDirPath = "/"
                 Terminal:runProg("root")
-            else
-                errorVisible = true
-                love.keyboard.setTextInput(false)
             end
             username = ""
             passwd = ""
@@ -94,7 +100,7 @@ function program:keypressed(key)
 end
 
 function program:textinput(key)
-    if errorVisible then return end
+    if authFailed or sysOffline then return end
     cmd = cmd .. (usernameEntered and "*" or string.upper(key))
     passwd = usernameEntered and passwd .. string.upper(key) or ""
 end

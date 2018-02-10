@@ -20,6 +20,8 @@ function program:onEnter()
         Terminal:endProg(-1, "CONNECT REQUIRES 1 PARAMETER: <IP>")
     elseif not Systems[self.args[1]] then
         Terminal:endProg(-1, "NO SYSTEM WITH IP: " .. self.args[1])
+    elseif Systems[self.args[1]].online ~= "true" then
+        Terminal:endProg(-1, "SYSTEM IS OFFLINE")
     elseif Terminal.ip == self.args[1] then
         Terminal:endProg(-1, "ALREADY CONNECTED")
     else

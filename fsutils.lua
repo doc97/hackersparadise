@@ -17,10 +17,17 @@ function resolvePath(path, str)
 end
 
 function readFile(start, path)
-    local pStr = resolvePath(start, path)
-    local d = Systems[Terminal.ip].fs
-    local p = { "/" }
+    local exists, d, p = fileExists(Terminal.ip, start, path)
+    p[#p] = nil
 
+    if not exists or type(d) == "table" then return nil, p end
+    return d, p
+end
+
+function fileExists(ip, start, path)
+    local pStr = resolvePath(start, path)
+    local d = Systems[ip].fs
+    local p = { "/" }
     local exists = true
     for match in string.gmatch(pStr, "[^/]+") do
         if d[match] then
@@ -35,11 +42,7 @@ function readFile(start, path)
             p[#p + 1] = "/"
         end
     end
-
-    p[#p] = nil
-
-    if not exists or type(d) == "table" then return nil, p end
-    return d, p
+    return exists, d, p
 end
 
 function getDirectory(start, path)

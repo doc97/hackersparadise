@@ -12,12 +12,14 @@ function program:onEnter()
     if #self.args < 2 then
         Terminal:endProg(-1, "HACK REQUIRES 2 PARAMETER: <IP> <PORT>")
     elseif not Systems[self.args[1]] then
-        Terminal:endProg(-1, "COULD NOT FIND SYSTEM AT IP: " .. self.args[1])
+        Terminal:endProg(-1, "NO SYSTEM WITH IP: " .. self.args[1])
     elseif self.args[1] == Terminal.ip then
         Terminal:endProg(-1, "YOU CANNOT ATTACK YOUR CURRENT SYSTEM!")
+    elseif Systems[self.args[1]].online ~= "true" then
+        Terminal:endProg(-1, "SYSTEM IS OFFLINE")
     elseif not Systems[self.args[1]].ports[self.args[2]] then
         Terminal:endProg(-1, "NO PORT WITH NUMBER " .. self.args[2] .. " FOUND AT IP " .. self.args[1])
-    elseif Systems[self.args[1]].ports[self.args[2]].status == "closed" then
+    elseif Systems[self.args[1]].ports[self.args[2]].status ~= "OPEN" then
         Terminal:endProg(-1, "CONNECTION REFUSED.")
     else
         ip = self.args[1]
@@ -44,6 +46,7 @@ function program:update(dt)
     end
 
     if step >= STEP_COUNT then
+        step = 0
         if math.random(100) > Systems[ip].firewall then
             Terminal.ip = ip
             for key,_ in pairs(Systems[ip].accounts) do
@@ -53,6 +56,10 @@ function program:update(dt)
             Terminal:endProg(0, "SUCCESS.")
         else
             CC:stopDetection(Terminal.rootIp, ip)
+            local fw = Systems[ip].firewall
+            if fw < 95 then
+                Systems[ip].firewall = fw + 5
+            end
             Terminal:endProg(-1, "ATTACK FAILED")
         end
     end

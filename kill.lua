@@ -5,9 +5,10 @@ function program:onEnter()
         Terminal:endProg(-1, "KILL REQUIRES 1 PARAMETER: <PID>")
     elseif not tonumber(self.args[1]) then
         Terminal:endProg(-1, "PID MUST BE A NUMBER")
-    elseif not CC:killProcess(Terminal.ip, tonumber(self.args[1])) then
+    elseif not CC:hasProcessWithPID(Terminal.ip, tonumber(self.args[1])) then
         Terminal:endProg(-1, "NO PROCESS WITH THAT PID")
     else
+        CC:killProcess(Terminal.ip, tonumber(self.args[1]))
         Terminal:endProg()
     end
 end
