@@ -1,6 +1,7 @@
 local screen = { }
 local Fonts = Fonts
 
+local navInstructions = " [ESCAPE] QUIT     [UP]/[DOWN] SCROLL     [LEFT]/[RIGHT] NEXT/PREV"
 local parts = { }
 local partIndex = 1
 local pageRows = { }
@@ -21,7 +22,7 @@ function screen:loadPart(i)
     pageIndex = 1
     pageStartIndex = 1
     headerCount = parts[partIndex] and #parts[partIndex].headers or 0
-    local y = 88
+    local y = 56
     local rows = 1
     local index = 1
     for i = 1, headerCount, 1 do
@@ -35,9 +36,9 @@ function screen:loadPart(i)
         for s in string.gmatch(str, "\n") do rows = rows + 1 end
         y = y + Fonts["bold-12"]:getHeight() * rows
 
-        if y > love.graphics.getHeight() then
+        if y > love.graphics.getHeight() - 32 then
             pageRows[#pageRows + 1] = i - 1
-            y = 88
+            y = 56
         end
         index = i
     end
@@ -59,15 +60,10 @@ function screen:draw()
     love.graphics.setColor(Systems[Terminal.ip].color)
 
     if not err then
-        if #pageRows > 1 then
-            love.graphics.setFont(Fonts["bold-16"])
-            love.graphics.printf(pageIndex .. "/" .. #pageRows, -16, love.graphics.getHeight() - 32, love.graphics.getWidth(), "right")
-        end
-
         love.graphics.setFont(Fonts["bold-24"])
-        love.graphics.printf(parts[partIndex].title, 0, 32, love.graphics.getWidth(), "center")
+        love.graphics.printf(parts[partIndex].title, 0, 16, love.graphics.getWidth(), "center")
 
-        local y = 88
+        local y = 56
         for i = pageStartIndex, pageRows[pageIndex], 1 do
             local str = parts[partIndex].headers[i]
             local rows = 1
@@ -83,6 +79,18 @@ function screen:draw()
             love.graphics.print(str, 16, y)
             y = y + Fonts["bold-12"]:getHeight() * rows
         end
+
+        if #pageRows > 1 then
+            love.graphics.setFont(Fonts["bold-16"])
+            love.graphics.printf(pageIndex .. "/" .. #pageRows, -32, love.graphics.getHeight() - 64, love.graphics.getWidth(), "right")
+        end
+
+        love.graphics.setFont(Fonts["bold-16"])
+        love.graphics.rectangle("fill", 14, love.graphics.getHeight() - 32, love.graphics.getWidth() - 28, 24)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.print(navInstructions, 32, love.graphics.getHeight() - 32)
+        love.graphics.setColor(Systems[Terminal.ip].color)
+
     else
         love.graphics.setFont(Fonts["bold-24"])
         love.graphics.printf("ERROR LOADING TUTORIAL", 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), "center")

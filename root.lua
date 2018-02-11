@@ -41,6 +41,7 @@ TRACEROUTE - TRACE CURRENT ROUTE OF TRAFFIC
 UNALIAS - REMOVE AN ALIAS
 WHOAMI - SHOWS THE CURRENT USERNAME
 ]]
+local navInstructions = " [TAB] SCROLL     [UP]/[DOWN] NEXT/PREV CMD     [LEFT]/[RIGHT] MOVE CURSOR"
 local blinkTimer = 0
 local cursorVisible = false;
 
@@ -110,9 +111,6 @@ function program:draw()
     love.graphics.print(prompt .. cmdStr, 16, 40)
 
     -- Paged output
-    if pageCount > 1 then
-        love.graphics.printf(page .. "/" .. pageCount, -16, love.graphics.getHeight() - 32, love.graphics.getWidth(), "right")
-    end
     for i = 1, pageRows, 1 do
         local index = (page - 1) * pageRows + i
         if index < 1 or index > #output then break end
@@ -132,7 +130,7 @@ function program:draw()
         for i = 0, #Systems[Terminal.ip].color, 1 do color[i] = Systems[Terminal.ip].color[i] end
         color[4] = 50
         love.graphics.setColor(color)
-        love.graphics.rectangle("fill", love.graphics.getWidth() - 266, 88, 250, love.graphics.getHeight() - 128) 
+        love.graphics.rectangle("fill", love.graphics.getWidth() - 266, 88, 250, love.graphics.getHeight() - 160) 
         love.graphics.setColor(Systems[Terminal.ip].color)
         love.graphics.print("NOTES", love.graphics.getWidth() - 258, 96)
 
@@ -145,8 +143,21 @@ function program:draw()
             love.graphics.print(str, love.graphics.getWidth() - 258, y)
             y = y + rows * 12 * 1.5
         end
-        love.graphics.setFont(Fonts["bold-16"])
     end
+
+    -- Page number
+    if pageCount > 1 then
+        love.graphics.setFont(Fonts["bold-16"])
+        love.graphics.printf(page .. "/" .. pageCount, -32, love.graphics.getHeight() - 64, love.graphics.getWidth(), "right")
+    end
+
+    -- Navigation bar
+    love.graphics.setFont(Fonts["bold-16"])
+    love.graphics.rectangle("fill", 14, love.graphics.getHeight() - 32, love.graphics.getWidth() - 28, 24)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.print(navInstructions, 32, love.graphics.getHeight() - 32)
+    love.graphics.setColor(Systems[Terminal.ip].color)
+
 end
 
 function program:keypressed(key)
