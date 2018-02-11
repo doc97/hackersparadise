@@ -73,6 +73,7 @@ function program:reset()
     input = {}
     inputStr = ""
     inputDirty = false
+    cursorPos = 1
     output = {}
     pageCount = 0
     page = 0
@@ -223,6 +224,7 @@ function program:keypressed(key)
 
         input = {}
         inputDirty = true
+        cursorPos = #input + 1
     end
 end
 

@@ -1,7 +1,7 @@
 local program = { args = {} }
 
-local inboxInstructions = " [ENTER] READ MAIL    [UP]/[DOWN] NAVIGATE    [TAB] RETURN"
-local msgInstructions = " [ENTER] RETURN TO INBOX"
+local inboxInstructions = " [ESCAPE] EXIT    [ENTER] READ MAIL    [UP]/[DOWN] NAVIGATE"
+local msgInstructions = " [ESCAPE] RETURN TO INBOX"
 local inboxTitle = "MAIL INBOX\n-------------\n"
 local msgTitle = ""
 local outBuf = {}
@@ -66,13 +66,16 @@ function program:draw()
 end
 
 function program:keypressed(key)
-    if key == "return" then
-        readMode = not readMode
-    end
 
-    if not readMode then
+    if readMode then
+        if key == "escape" then
+            readMode = false
+        end
+    else
         if key == "escape" then
             Terminal:endProg()
+        elseif key == "return" then
+            readMode = true
         elseif key == "up" and selection > 1 then
             selection = selection - 1
         elseif key == "down" and selection < #outBuf then
