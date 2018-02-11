@@ -18,8 +18,21 @@ function CC:isBeingDetected(system)
 end
 
 function CC:startDetection(attacker, defender)
-    if self:hasProcessWithName(defender, "IDS") then
-        self.ids[defender] = { ["target"] = attacker, ["timer"] = 0 }
+    if self:hasProcessWithName(defender, "IDS") and Systems[defender].ids > 0 then
+        -- Traceroute to count hops
+        local ipaddr = Terminal.ip
+        local visited = { }
+        local hops = -1
+
+        repeat
+            hops = hops + 1
+            if visited[ipaddr] then break end
+            visited[ipaddr] = true
+            ipaddr = Systems[ipaddr].route
+        until ipaddr == ""
+
+        local time = Systems[defender].ids + hops * 5
+        self.ids[defender] = { ["target"] = attacker, ["timer"] = time }
         self.idsCount = self.idsCount + 1
     end
 end
@@ -81,12 +94,12 @@ function CC:update(dt)
     if self.idsCount > 0 then
         for ip, ids in pairs(self.ids) do
             if ids then
-                ids.timer = ids.timer + dt
+                ids.timer = ids.timer - dt
                 if not self:hasProcessWithName(ip, "IDS") then
                     self:stopDetection(Terminal.rootIp, ip)
                 end
 
-                if Systems[ip].ids > 0 and ids.timer > Systems[ip].ids then
+                if ids.timer < 0 then
                     print("System at IP " .. ids.target .. " has been obliterated!")
                     Systems[ids.target] = nil
                     self.ids[ip] = nil

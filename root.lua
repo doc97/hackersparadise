@@ -116,7 +116,7 @@ function program:draw()
     -- IDS Tracking
     local idsIp = CC:isBeingDetected(Terminal.rootIp)
     if idsIp then
-        love.graphics.printf("TIME UNTIL DETECTION: " .. string.format("%.1f", Systems[idsIp].ids - CC.ids[idsIp].timer) .. " SECONDS!",
+        love.graphics.printf("TIME UNTIL DETECTION: " .. string.format("%.1f", CC.ids[idsIp].timer) .. " SECONDS!",
         0, love.graphics.getHeight() - 64, love.graphics.getWidth(), "center")
     end
 
