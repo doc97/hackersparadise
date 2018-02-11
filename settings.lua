@@ -32,14 +32,15 @@ DefaultSystems = {
         ["neighbours"] = {
             "192.168.1.2"
         },
-        ["notes"] = { },
         ["processes"] = {
             ["0"] = "ROOT"
         },
-        ["mail"] = { },
+        ["route"] = "",
         ["color"] = { 50, 255, 50 },
         ["firewall"] = 50,
-        ["ids"] = 15
+        ["ids"] = 15,
+        ["mail"] = { },
+        ["notes"] = { },
     },
     ["192.168.1.2"] = {
         ["online"] = "true",
@@ -75,6 +76,7 @@ DefaultSystems = {
         ["processes"] = {
             ["0"] = "ROOT"
         },
+        ["route"] = "",
         ["color"] = { 0, 155, 255 },
         ["firewall"] = 10,
         ["ids"] = 25

@@ -5,6 +5,7 @@ ADDUSER - INTERACTIVELY ADD A USER
 ADDNOTE - ADD A NOTE
 ALIAS - CREATE AN ALIAS FOR A STRING
 CD - CHANGE DIRECTORY
+CHOWN - CHANGE OWNER
 CLEAR - CLEAR OUTPUT BUFFER
 COLOR - SHOW OR SET SYSTEM COLOR
 CONNECT - CONNECT TO SYSTEM
@@ -30,11 +31,13 @@ PROBE - GATHER INFORMATION ABOUT SYSTEM
 PS - LIST PROCESSES
 READ - READ THE CONTENTS OF A FILE
 RM - REMOVE FILE OR DIRECTORY
+ROUTE - ROUTE TRAFFIC THROUGH A PROXY
 RUN - RUN A SCRIPT
 SCAN - SCAN A SYSTEM FOR OPEN PORTS
 SCP - SECURE COPY FILES TO ROOT SYSTEM
 SEARCH - SEARCH FOR NEIGHBOURING SYSTEMS
 START - START A PROCESS
+TRACEROUTE - TRACE CURRENT ROUTE OF TRAFFIC
 WHOAMI - SHOWS THE CURRENT USERNAME
 ]]
 local blinkTimer = 0
@@ -192,6 +195,7 @@ function program:keypressed(key)
         elseif cmd == "ADDNOTE" then Terminal:runProg("addnote", args)
         elseif cmd == "ALIAS" then Terminal:runProg("alias", args)
         elseif cmd == "CD" then Terminal:runProg("cd", args)
+        elseif cmd == "CHOWN" then Terminal:runProg("chown", args)
         elseif cmd == "CLEAR" then self:setOutput("")
         elseif cmd == "COLOR" then Terminal:runProg("color", args)
         elseif cmd == "CONNECT" then Terminal:runProg("connect", args)
@@ -218,11 +222,13 @@ function program:keypressed(key)
         elseif cmd == "PWD" then self:setOutput(Terminal.workingDirPath)
         elseif cmd == "READ" then Terminal:runProg("read", args)
         elseif cmd == "RM" then Terminal:runProg("rm", args)
+        elseif cmd == "ROUTE" then Terminal:runProg("route", args)
         elseif cmd == "RUN" then Terminal:runProg("run", args)
         elseif cmd == "SCAN" then Terminal:runProg("scan", args)
         elseif cmd == "SCP" then Terminal:runProg("scp", args)
         elseif cmd == "SEARCH" then Terminal:runProg("search")
         elseif cmd == "START" then Terminal:runProg("start", args)
+        elseif cmd == "TRACEROUTE" then Terminal:runProg("traceroute", args)
         elseif cmd == "WHOAMI" then self:setOutput(Terminal.username)
         else self:setOutput((cmd or "") .. ": COMMAND NOT FOUND")
         end

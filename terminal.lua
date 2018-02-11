@@ -22,6 +22,7 @@ local programs = {
     ["alias"] = dofile("alias.lua"),
     ["boot"] = dofile("boot.lua"),
     ["cd"] = dofile("cd.lua"),
+    ["chown"] = dofile("chown.lua"),
     ["color"] = dofile("color.lua"),
     ["connect"] = dofile("connect.lua"),
     ["cp"] = dofile("cp.lua"),
@@ -44,11 +45,13 @@ local programs = {
     ["read"] = dofile("read.lua"),
     ["root"] = dofile("root.lua"),
     ["rm"] = dofile("rm.lua"),
+    ["route"] = dofile("route.lua"),
     ["run"] = dofile("run.lua"),
     ["scan"] = dofile("scan.lua"),
     ["scp"] = dofile("scp.lua"),
     ["search"] = dofile("search.lua"),
-    ["start"] = dofile("start.lua")
+    ["start"] = dofile("start.lua"),
+    ["traceroute"] = dofile("traceroute.lua")
 }
 
 function Terminal:newGame()
