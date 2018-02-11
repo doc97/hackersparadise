@@ -51,6 +51,7 @@ local inputStr = ""
 local inputDirty = false
 local output = {}
 local cursor = "_"
+local cursorPos = 1
 local pageCount = 0
 local pageRows = 20
 local page = 1
@@ -100,9 +101,13 @@ function program:update(dt)
 end
 
 function program:draw()
-    love.graphics.setColor(Systems[Terminal.ip].color)
-    love.graphics.printf("-== PROPERTY OF " .. Systems[Terminal.ip].owner .. " ==-", 0, 16, love.graphics.getWidth(), "center")
-    love.graphics.print(Terminal.username .. "@" .. Terminal.ip .. ":" .. Terminal.workingDirPath .. "> " .. inputStr .. (cursorVisible and cursor or ""), 16, 40)
+    Terminal:drawBanner()
+
+    local prompt = Terminal.username .. "@" .. Terminal.ip .. ":" .. Terminal.workingDirPath .. "> "
+    local cmdStr1 = string.sub(inputStr, 1, cursorPos - 1)
+    local cmdStr2 = string.sub(inputStr, cursorPos)
+    local cmdStr = cmdStr1 .. (cursorVisible and cursor or " ") .. cmdStr2
+    love.graphics.print(prompt .. cmdStr, 16, 40)
 
     -- Paged output
     if pageCount > 1 then
@@ -146,16 +151,16 @@ end
 
 function program:keypressed(key)
     if key == "backspace" then
-        input[#input] = nil
+        table.remove(input, cursorPos - 1)
+        if cursorPos > 1 then cursorPos = cursorPos - 1 end
         inputDirty = true
-    elseif key == "right" then
+    elseif key == "tab" then
         page = (page + 1)
         if page > pageCount then page = 1 end
     elseif key == "left" then
-        if pageCount > 0 then
-            page = (page - 1) % pageCount
-            if page < 1 then page = pageCount end
-        end
+        if cursorPos > 1 then cursorPos = cursorPos - 1 end
+    elseif key == "right" then
+        if cursorPos <= #input then cursorPos = cursorPos + 1 end
     elseif key == "up" then
         if cmdIndex < #cmdStack then
             cmdIndex = cmdIndex + 1
@@ -163,6 +168,7 @@ function program:keypressed(key)
             input = {}
             for char in string.gmatch(cmdStr, ".") do input[#input + 1] = char end
             inputDirty = true
+            cursorPos = #input + 1
         end
     elseif key == "down" then
         if cmdIndex > 0 then
@@ -171,6 +177,7 @@ function program:keypressed(key)
             input = {}
             for char in string.gmatch(cmdStr, ".") do input[#input + 1] = char end
             inputDirty = true
+            cursorPos = #input + 1
         end
     elseif key == "return" then
         output = {}
@@ -188,18 +195,18 @@ function program:keypressed(key)
             args[i - 1] = arg
         end
 
-        table.insert(cmdStack, 1, table.concat(input))
-        if #cmdStack > 10 then cmdStack[#cmdStack] = nil end
-        cmdIndex = 0
+        if cmd then
+            table.insert(cmdStack, 1, table.concat(input))
+            if #cmdStack > 10 then cmdStack[#cmdStack] = nil end
+            cmdIndex = 0
+        end
 
         if cmd == "CLEAR" then self:setOutput("")
         elseif cmd == "EXIT" then love.event.quit()
         elseif cmd == "HELP" then self:setOutput(HELP_MSG)
         elseif cmd == "LOGOUT" then Terminal:endProg()
         elseif cmd == "MAN" then Screens:setScreen("manual")
-        end
-
-        if not Terminal:runProg(string.lower(cmd), args) then
+        elseif not cmd or not Terminal:runProg(string.lower(cmd), args) then
             self:setOutput((cmd or "") .. ": COMMAND NOT FOUND")
         end
 
@@ -209,7 +216,8 @@ function program:keypressed(key)
 end
 
 function program:textinput(key)
-    input[#input + 1] = string.upper(key)
+    table.insert(input, cursorPos, string.upper(key))
+    cursorPos = cursorPos + 1
     inputDirty = true
 end
 

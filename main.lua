@@ -14,7 +14,7 @@ function love.load()
     Fonts["bold-24"] = love.graphics.newFont("assets/8bit-Bold.ttf", 24)
     Fonts["bold-48"] = love.graphics.newFont("assets/8bit-Bold.ttf", 48)
 
-    love.window.setTitle("NERDConsole")
+    love.window.setTitle("Hacker's paradise")
     love.keyboard.setKeyRepeat(true)
 
     CurrentScreen = Screens["mainmenu"]

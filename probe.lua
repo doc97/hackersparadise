@@ -27,7 +27,12 @@ function program:onEnter()
         strBuf[#strBuf + 1] = (sys.firewall > 0 and sys.firewall .. "%" or "NO")
         strBuf[#strBuf + 1] = "\n"
         strBuf[#strBuf + 1] = "IDS: "
-        strBuf[#strBuf + 1] = (sys.ids > 0 and sys.ids .. " SECONDS" or "NO")
+        if sys.ids > 0 and CC:hasProcessWithName(self.args[1], "IDS") then
+            strBuf[#strBuf + 1] = sys.ids .. " SECONDS"
+        else
+            strBuf[#strBuf + 1] = "NONE"
+        end
+
         Terminal:endProg(0, table.concat(strBuf))
     end
 end

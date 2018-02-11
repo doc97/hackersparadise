@@ -24,11 +24,11 @@ function program:reset()
     cmd = ""
     username = ""
     passwd = ""
+    Terminal.ip = "192.168.1.1"
 end
 
 function program:onEnter()
     self:reset()
-    Terminal.ip = "192.168.1.1"
 end
 
 function program:onResume()

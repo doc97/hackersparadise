@@ -231,22 +231,10 @@ DefaultSystems = {
                 ["DOCUMENTS"] = { },
                 ["PICTURES"] = { },
                 ["CHATS"] = {
-                    ["CR3SC3NT"] = {
-                        ["DAY1"] = { },
-                        ["DAY2"] = { },
-                        ["DAY3"] = { }
-                    },
-                    ["ZEUS"] = {
-                        ["DAY1"] = { },
-                        ["DAY2"] = {
-                            ["INVITE.TXT"] = "CONGRATULATIONS!\nYOU HAVE OFFICIALLY BEEN INVITED TO PUPPYT33RS. IF YOU ARE INTERESTED IN JOINING, PLEASE COPY THIS INVITE TO YOUR OWN MACHINE."
-                        },
-                        ["DAY3"] = { }
-                    },
+                    ["CR3SC3NT"] = { },
+                    ["ZEUS"] = {},
                     ["L0CALH0ST"] = {
-                        ["DAY1"] = { },
-                        ["DAY2"] = { },
-                        ["DAY3"] = { }
+                        ["INVITE.TXT"] = "CONGRATULATIONS!\nYOU HAVE OFFICIALLY BEEN INVITED TO PUPPYT33RS. IF YOU ARE INTERESTED IN JOINING,\nPLEASE COPY THIS INVITE TO YOUR OWN MACHINE."
                     },
                 }
             }
@@ -262,7 +250,6 @@ DefaultSystems = {
         ["firewall"] = 40,
         ["ids"] = 10
     }
-
 }
 
 Settings = { }

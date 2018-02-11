@@ -2,7 +2,7 @@ local program = { args = {} }
 local Fonts = Fonts
 
 function program:onEnter()
-    if #self.args[1] < 1 then
+    if #self.args < 1 then
         Terminal:endProg(-1, "CANNOT ADD AN EMPTY NOTE")
     else
         local formattedStr = {}
