@@ -42,6 +42,7 @@ local programs = {
     ["passwd"] = dofile("passwd.lua"),
     ["probe"] = dofile("probe.lua"),
     ["ps"] = dofile("ps.lua"),
+    ["pwd"] = dofile("pwd.lua"),
     ["read"] = dofile("read.lua"),
     ["root"] = dofile("root.lua"),
     ["rm"] = dofile("rm.lua"),
@@ -52,7 +53,8 @@ local programs = {
     ["search"] = dofile("search.lua"),
     ["start"] = dofile("start.lua"),
     ["traceroute"] = dofile("traceroute.lua"),
-    ["unalias"] = dofile("unalias.lua")
+    ["unalias"] = dofile("unalias.lua"),
+    ["whoami"] = dofile("whoami.lua")
 }
 
 function Terminal:newGame()
@@ -96,6 +98,9 @@ function Terminal:runProg(name, args)
         Stack.push(progStack, programs[name])
         Stack.peek(progStack).args = args
         Stack.peek(progStack):onEnter()
+        return true
+    else
+        return false
     end
 end
 
