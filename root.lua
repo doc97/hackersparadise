@@ -30,6 +30,7 @@ PROBE - GATHER INFORMATION ABOUT SYSTEM
 PS - LIST PROCESSES
 READ - READ THE CONTENTS OF A FILE
 RM - REMOVE FILE OR DIRECTORY
+RUN - RUN A SCRIPT
 SCAN - SCAN A SYSTEM FOR OPEN PORTS
 SCP - SECURE COPY FILES TO ROOT SYSTEM
 SEARCH - SEARCH FOR NEIGHBOURING SYSTEMS
@@ -217,6 +218,7 @@ function program:keypressed(key)
         elseif cmd == "PWD" then self:setOutput(Terminal.workingDirPath)
         elseif cmd == "READ" then Terminal:runProg("read", args)
         elseif cmd == "RM" then Terminal:runProg("rm", args)
+        elseif cmd == "RUN" then Terminal:runProg("run", args)
         elseif cmd == "SCAN" then Terminal:runProg("scan", args)
         elseif cmd == "SCP" then Terminal:runProg("scp", args)
         elseif cmd == "SEARCH" then Terminal:runProg("search")
