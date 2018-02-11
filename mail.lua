@@ -71,8 +71,8 @@ function program:keypressed(key)
     end
 
     if not readMode then
-        if key == "tab" then
-            Terminal:endProg(0)
+        if key == "escape" then
+            Terminal:endProg()
         elseif key == "up" and selection > 1 then
             selection = selection - 1
         elseif key == "down" and selection < #outBuf then

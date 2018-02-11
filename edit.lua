@@ -55,7 +55,7 @@ function program:keypressed(key)
     elseif key == "return" then
         editLine = editLine + 1
         content[editLine] = ""
-    elseif key == "tab" then
+    elseif key == "escape" then
         dir[filename] = table.concat(content, "\n")
         Terminal:endProg()
     elseif key == "up" and editLine > 1 then

@@ -74,6 +74,8 @@ function program:keypressed(key)
     if key == "backspace" then
         cmd = cmd:sub(1, -2)
         passwd = passwd:sub(1, -2)
+    elseif key == "escape" then
+        Screens:setScreen("mainmenu")
     elseif key == "return" then
         if usernameEntered then
             local sys = Systems[Terminal.rootIp]

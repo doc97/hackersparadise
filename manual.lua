@@ -90,7 +90,7 @@ function screen:draw()
 end
 
 function screen:keypressed(key)
-    if key == "tab" then
+    if key == "escape" then
         Screens:setScreen("game")
     elseif key == "down" then
         if pageIndex < #pageRows then

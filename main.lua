@@ -46,4 +46,6 @@ function love.quit()
     if err then print("Error: " .. err) end
     err = table.save(Settings, "settings-save.lua")
     if err then print("Error: " .. err) end
+    err = table.save(Env, "env-save.lua")
+    if err then print("Error: " .. err) end
 end
