@@ -9,9 +9,9 @@ DefaultEnv = {
 }
 
 -- IDS
-function CC:isBeingDetected(system)
+function CC:isBeingDetectedBy(ipaddr)
     for ip, ids in pairs(self.ids) do
-        if ids.target == system then return ip end
+        if ip == ipaddr then return ip end
     end
 
     return nil
@@ -38,7 +38,7 @@ function CC:startDetection(attacker, defender)
 end
 
 function CC:stopDetection(attacker, defender)
-    if self:isBeingDetected(attacker, defender) then
+    if self:isBeingDetectedBy(defender) then
         self.ids[defender] = nil
         self.idsCount = self.idsCount - 1
     end
@@ -92,19 +92,18 @@ end
 function CC:update(dt)
     -- IDS
     if self.idsCount > 0 then
-        for ip, ids in pairs(self.ids) do
-            if ids then
-                ids.timer = ids.timer - dt
+        for ip, sys in pairs(self.ids) do
+            if sys then
+                sys.timer = sys.timer - dt
                 if not self:hasProcessWithName(ip, "IDS") then
-                    self:stopDetection(Terminal.rootIp, ip)
+                    self:stopDetection(sys.target, ip)
                 end
 
-                if ids.timer < 0 then
-                    print("System at IP " .. ids.target .. " has been obliterated!")
-                    Systems[ids.target] = nil
-                    self.ids[ip] = nil
-                    self.idsCount = self.idsCount - 1
-                    love.event.quit()
+                if sys.timer < 0 then
+                    if Terminal.ip == ip then Terminal:runProg("disconnect") end
+                    local target = sys.target
+                    self:stopDetection(sys.target, ip)
+                    self:killProcess(target, 0)
                 end
             end
         end

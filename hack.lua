@@ -27,7 +27,7 @@ function program:onEnter()
         progressBar = "["
         stepTimer = 0
         step = 0
-        CC:startDetection(Terminal.rootIp, ip)
+        CC:startDetection(Terminal.ip, ip)
     end
 end
 
@@ -71,7 +71,7 @@ function program:draw()
     love.graphics.print("] " .. (100 * step / STEP_COUNT) .. "%", 660, 40)
     love.graphics.printf("PRESS ANY KEY TO ABORT", 0, 88, love.graphics.getWidth(), "center")
 
-    local idsIp = CC:isBeingDetected(Terminal.rootIp)
+    local idsIp = CC:isBeingDetectedBy(ip)
     if idsIp then
         love.graphics.printf("TIME UNTIL DETECTION: " .. string.format("%.1f", CC.ids[idsIp].timer) .. " SECONDS",
         0, 184, love.graphics.getWidth(), "center")
