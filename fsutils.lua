@@ -33,10 +33,7 @@ local function fileExists(ip, start, path)
             p[#p + 1] = "/"
         else
             exists = false
-            d[match] = { }
-            d = d[match]
-            p[#p + 1] = match
-            p[#p + 1] = "/"
+            break
         end
     end
     return exists, d, p
@@ -44,7 +41,7 @@ end
 
 function getFile(ip, start, path)
     local exists, d, p = fileExists(ip, start, path)
-    if exists == true and (type(d) ~= "table") then return d, p
+    if exists and (type(d) ~= "table") then return d, p
     else return nil end
 end
 

@@ -5,8 +5,7 @@ local getDirectory = getDirectory
 local dir = {}
 local filename = ""
 local content = {}
-local contentStr = ""
-local contentDirty = false
+local editLine = 1
 local cursor = "_"
 local cursorVisible = false;
 local blinkTimer = 0
@@ -18,12 +17,12 @@ function program:onEnter()
         local text, path = getFile(Terminal.ip, Terminal.workingDirPath, self.args[1])
         dir = getDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1] .. "/..")
         filename = getFilename(Terminal.workingDirPath, self.args[1])
-        if not text then
-            dir[filename] = ""
-        else
-            for c in string.gmatch(text, ".") do content[#content + 1] = c end
-            contentDirty = true
-        end
+        if not text then dir[filename] = "" end
+
+        content = {}
+        for c in string.gmatch(text or "", "[^\n]+") do content[#content + 1] = c end
+        if #content == 0 then content[1] = "" end
+        editLine = #content
     end
 end
 
@@ -33,34 +32,41 @@ function program:update(dt)
         blinkTimer = 0
         cursorVisible = not cursorVisible
     end
-
-    if contentDirty then
-        contentStr = table.concat(content)
-        contentDirty = false
-    end
 end
 
 function program:draw()
     love.graphics.printf("EDITING FILE: " .. filename, 0, 16, love.graphics.getWidth(), "center")
-    love.graphics.print(contentStr .. (cursorVisible and cursor or ""), 16, 88)
+    local lineStr = ""
+    for i,line in ipairs(content) do
+        lineStr = line
+        if i == editLine and cursorVisible then lineStr = lineStr .. cursor end
+        love.graphics.print(lineStr, 16, 88 + (i - 1) * Fonts["bold-16"]:getHeight())
+    end
 end
 
 function program:keypressed(key)
     if key == "backspace" then
-        content[#content] = nil
-        contentDirty = true
+        if content[editLine] == "" and #content > 1 then
+            table.remove(content, editLine)
+            editLine = editLine - 1
+        else
+            content[editLine] = string.sub(content[editLine], 1, -2)
+        end
     elseif key == "return" then
-        content[#content + 1] = "\n"
-        contentDirty = true
+        editLine = editLine + 1
+        content[editLine] = ""
     elseif key == "tab" then
-        dir[filename] = table.concat(content)
+        dir[filename] = table.concat(content, "\n")
         Terminal:endProg()
+    elseif key == "up" and editLine > 1 then
+        editLine = editLine - 1
+    elseif key == "down" and editLine < #content then
+        editLine = editLine + 1
     end
 end
 
 function program:textinput(key)
-    content[#content + 1] = string.upper(key)
-    contentDirty = true
+    content[editLine] = content[editLine] .. string.upper(key)
 end
 
 -- Unused

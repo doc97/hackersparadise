@@ -5,7 +5,7 @@ local args = {}
 
 function program:nextProg()
     if #cmds == 0 then
-        Terminal:endProg(0, Terminal.returnStr)
+        Terminal:endProg(0, Terminal.returnStr .. "\nSCRIPT FINISHED")
     else
         local cmd = table.remove(cmds, 1)
         local arg = table.remove(args, 1)
@@ -28,12 +28,23 @@ function program:onEnter()
                 table.remove(s, 1)
                 args[#args + 1] = s
             end
-            self:nextProg()
+
+            if #cmds == 0 then
+                Terminal:endProg(0, "")
+            else
+                self:nextProg()
+            end
         end
     end
 end
 
-function program:onResume() self:nextProg() end
+function program:onResume()
+    if Terminal.returnCode ~= 0 then
+        Terminal:endProg(-1, Terminal.returnStr .. "\n--\nSCRIPT ABORTED!")
+    else
+        self:nextProg()
+    end
+end
 
 -- Unused
 function program:onExit() end
