@@ -38,6 +38,7 @@ SCP - SECURE COPY FILES TO ROOT SYSTEM
 SEARCH - SEARCH FOR NEIGHBOURING SYSTEMS
 START - START A PROCESS
 TRACEROUTE - TRACE CURRENT ROUTE OF TRAFFIC
+UNALIAS - REMOVE AN ALIAS
 WHOAMI - SHOWS THE CURRENT USERNAME
 ]]
 local blinkTimer = 0
@@ -229,6 +230,7 @@ function program:keypressed(key)
         elseif cmd == "SEARCH" then Terminal:runProg("search")
         elseif cmd == "START" then Terminal:runProg("start", args)
         elseif cmd == "TRACEROUTE" then Terminal:runProg("traceroute", args)
+        elseif cmd == "UNALIAS" then Terminal:runProg("unalias", args)
         elseif cmd == "WHOAMI" then self:setOutput(Terminal.username)
         else self:setOutput((cmd or "") .. ": COMMAND NOT FOUND")
         end

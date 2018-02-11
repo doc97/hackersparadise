@@ -51,7 +51,8 @@ local programs = {
     ["scp"] = dofile("scp.lua"),
     ["search"] = dofile("search.lua"),
     ["start"] = dofile("start.lua"),
-    ["traceroute"] = dofile("traceroute.lua")
+    ["traceroute"] = dofile("traceroute.lua"),
+    ["unalias"] = dofile("unalias.lua")
 }
 
 function Terminal:newGame()
