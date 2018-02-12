@@ -6,6 +6,7 @@ local dir = {}
 local filename = ""
 local content = {}
 local editLine = 1
+local cursorPos = 1
 local cursor = "_"
 local cursorVisible = false;
 local blinkTimer = 0
@@ -23,6 +24,7 @@ function program:onEnter()
         for c in string.gmatch(text or "", "[^\n]+") do content[#content + 1] = c end
         if #content == 0 then content[1] = "" end
         editLine = #content
+        cursorPos = string.len(content[editLine]) + 1
     end
 end
 
@@ -39,34 +41,54 @@ function program:draw()
     local lineStr = ""
     for i,line in ipairs(content) do
         lineStr = line
-        if i == editLine and cursorVisible then lineStr = lineStr .. cursor end
+        if i == editLine then
+            local lineStr1 = string.sub(lineStr, 1, cursorPos - 1)
+            local lineStr2 = string.sub(lineStr, cursorPos)
+            lineStr = lineStr1 .. (cursorVisible and cursor or " ") .. lineStr2
+        end
+
         love.graphics.print(lineStr, 16, 88 + (i - 1) * Fonts["bold-16"]:getHeight())
     end
 end
 
 function program:keypressed(key)
     if key == "backspace" then
-        if content[editLine] == "" and #content > 1 then
+        if cursorPos == 1 then
+            local rest = string.sub(content[editLine], cursorPos)
             table.remove(content, editLine)
-            editLine = editLine - 1
+            editLine = math.max(1, editLine - 1)
+            cursorPos = string.len(content[editLine]) + 1
+            content[editLine] = content[editLine] .. rest
         else
-            content[editLine] = string.sub(content[editLine], 1, -2)
+            local lineStr = content[editLine]
+            content[editLine] = string.sub(lineStr, 1, cursorPos - 2) .. string.sub(lineStr, cursorPos)
+            if cursorPos > 1 then cursorPos = cursorPos - 1 end
         end
+    elseif key == "left" then
+        if cursorPos > 1 then cursorPos = cursorPos - 1 end
+    elseif key == "right" then
+        if cursorPos <= string.len(content[editLine]) then cursorPos = cursorPos + 1 end
     elseif key == "return" then
+        local lineStr = content[editLine]
+        content[editLine] = string.sub(lineStr, 1, cursorPos - 1)
         editLine = editLine + 1
-        content[editLine] = ""
+        table.insert(content, editLine, string.sub(lineStr, cursorPos))
+        cursorPos = 1
     elseif key == "escape" then
         dir[filename] = table.concat(content, "\n")
         Terminal:endProg()
     elseif key == "up" and editLine > 1 then
         editLine = editLine - 1
+        cursorPos =  math.min(cursorPos, string.len(content[editLine]) + 1)
     elseif key == "down" and editLine < #content then
         editLine = editLine + 1
+        cursorPos =  math.min(cursorPos, string.len(content[editLine]) + 1)
     end
 end
 
 function program:textinput(key)
     content[editLine] = content[editLine] .. string.upper(key)
+    cursorPos = cursorPos + 1
 end
 
 -- Unused
