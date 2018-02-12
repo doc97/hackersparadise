@@ -198,15 +198,8 @@ function program:keypressed(key)
 
         local cmd = s[1]
         local args = {}
-        for i = 2, #s, 1 do
-            local arg = s[i]
-            for match in string.gmatch(arg, "%b{}") do
-                local alias = Settings.aliases[string.sub(match, 2, -2)]
-                if alias then arg = string.gsub(arg, match, alias) end
-            end
-            args[i - 1] = arg
-        end
-
+        for i = 2, #s, 1 do args[#args + 1] = s[i] end
+        
         if cmd then
             table.insert(cmdStack, 1, table.concat(input))
             if #cmdStack > 10 then cmdStack[#cmdStack] = nil end

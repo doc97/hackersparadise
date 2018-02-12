@@ -94,6 +94,15 @@ end
 
 function Terminal:runProg(name, args)
     if programs[name] then
+        for i = 1, args and #args or 0, 1 do
+            local arg = args[i]
+            for match in string.gmatch(arg, "%b{}") do
+                local alias = Settings.aliases[string.sub(match, 2, -2)]
+                if alias then arg = string.gsub(arg, match, alias) end
+            end
+            args[i] = arg
+        end
+
         if #progStack > 0 then Stack.peek(progStack):onPause() end
         Stack.push(progStack, programs[name])
         Stack.peek(progStack).args = args

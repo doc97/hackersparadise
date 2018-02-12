@@ -21,6 +21,8 @@ function program:onEnter()
         if not file then
             Terminal:endProg(-1, "NO SUCH FILE EXISTS")
         else
+            cmds = {}
+            args = {}
             for line in string.gmatch(file, "[^\n]+") do
                 local s = {}
                 for word in string.gmatch(line, "%g+") do s[#s + 1] = word end
