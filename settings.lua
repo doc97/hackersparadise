@@ -1,5 +1,10 @@
-Systems = { }
+Settings = { }
+DefaultSettings = {
+    ["aliases"] = { },
+    ["showNotes"] = "false"
+}
 
+Systems = { }
 DefaultSystems = {
     ["192.168.1.1"] = {
         ["online"] = "true",
@@ -38,23 +43,21 @@ DefaultSystems = {
         ["route"] = "",
         ["color"] = { 50, 255, 50 },
         ["firewall"] = 50,
-        ["ids"] = 15,
-        ["mail"] = { },
-        ["notes"] = { },
+        ["ids"] = 15
     },
     ["192.168.1.2"] = {
         ["online"] = "true",
-        ["name"] = "JOHN'S PC",
-        ["owner"] = "JOHN",
+        ["name"] = "TEST COMPUTER",
+        ["owner"] = "R33T",
         ["accounts"] = {
-            ["ROOTED"] = {
-                ["username"] = "JOHN",
-                ["passwd"] = "JOHN"
+            ["ROOT"] = {
+                ["username"] = "ROOT",
+                ["passwd"] = "TOOR"
             }
         },
         ["ports"] = {
             ["21"] = { ["service"] = "FTP", ["status"] = "OPEN" },
-            ["22"] = { ["service"] = "SSH", ["status"] = "OPEN" },
+            ["22"] = { ["service"] = "SSH", ["status"] = "CLOSED" },
             ["80"] = { ["service"] = "HTTP", ["status"] = "CLOSED" },
             ["443"] = { ["service"] = "HTTPS", ["status"] = "CLOSED" }
         },
@@ -65,23 +68,23 @@ DefaultSystems = {
             },
             ["BIN"] = { },
             ["HOME"] = {
-                ["DOCUMENTS"] = { },
+                ["DOCUMENTS"] = {
+                    ["FILE"] = "I AM A FILE"
+                },
                 ["PICTURES"] = { },
                 ["CHATS"] = { }
             }
         },
         ["neighbours"] = {
-            "192.168.1.1",
-            "192.168.1.3",
-            "192.168.1.4"
+            "192.168.1.1"
         },
         ["processes"] = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
         ["color"] = { 0, 155, 255 },
-        ["firewall"] = 10,
-        ["ids"] = 25
+        ["firewall"] = 0,
+        ["ids"] = 60
     },
     ["192.168.1.3"] = {
         ["online"] = "true",
@@ -252,9 +255,16 @@ DefaultSystems = {
     }
 }
 
-Settings = { }
+Env = { }
+DefaultEnv = {
+    ["reboot"] = { }
+}
 
-DefaultSettings = {
-    ["aliases"] = { },
-    ["showNotes"] = "true"
+PlayerInfo = { }
+DefaultPlayerInfo = {
+    ["mail"] = { },
+    ["notes"] = { },
+    ["knownSystems"] = {
+        ["192.168.1.1"] = true
+    }
 }

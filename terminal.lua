@@ -14,7 +14,30 @@ Terminal = {
     returnCode = 0,
     returnStr = ""
 }
-
+local tutorialMsg = {
+    { ["msg"] = "WELCOME! YOU HAVE GOT NEW MAIL. TYPE 'MAIL' AND PRESS ENTER TO OPEN THE\nMAIL CLIENT.", ["trigger"] = "mail" },
+    { ["msg"] = "TYPE 'SEARCH' AND PRESS ENTER TO FIND THE IP ADDRESS OF THE TEST\nCOMPUTER.", ["trigger"] = "search" },
+    { ["msg"] = "FIND OUT MORE INFORMATION WITH 'PROBE <IP ADDRESS>'\n(DO NOT INCLUDE THE '<' AND '>').", ["trigger"] = "probe" },
+    { ["msg"] = "USE 'SCAN <IP ADDRESS>' TO SCAN FOR OPEN PORTS.", ["trigger"] = "scan" },
+    { ["msg"] = "NOW HACK THE SYSTEM WITH 'HACK <IP ADDRESS> <PORT NUMBER>'.", ["trigger"] = "hack" },
+    { ["msg"] = "THE INTRUSION DETECTION SYSTEM IS TRACKING YOU! USE 'PS' TO FIND THE\nPROCESS ID (PID) OF THE PROCESS.", ["trigger"] = "ps" },
+    { ["msg"] = "KILL THE PROCESS WITH 'KILL <PID>'.", ["trigger"] = "kill" },
+    { ["msg"] = "RESTART THE IDS WITH 'START IDS'.", ["trigger"] = "start" },
+    { ["msg"] = "LASTLY, ADD A USER ACCOUNT BY RUNNING 'ADDUSER', YOU CAN LEAVE THE USERNAME\nAND PASSWORD EMPTY.", ["trigger"] = "adduser" },
+    { ["msg"] = "CONGRATULATIONS! YOU HAVE SUCCESSFULLY HACKED THE SYSTEM AND CREATED A\nBACKDOOR (THE USER ACCOUNT). RUN 'CONTINUE' TO CONTINUE.", ["trigger"] = "continue" },
+    { ["msg"] = "LET'S TAKE A LOOK AT THE FILESYSTEM, USE 'LS' TO LIST THE CONTENTS OF\nTHE CURRENT DIRECTORY.", ["trigger"] = "ls" },
+    { ["msg"] = "CHANGE YOUR WORKING DIRECTORY WITH 'CD HOME/DOCUMENTS', NOTE HOW THE\nTEXT IN YOUR PROMPT CHANGES.", ["trigger"] = "cd" },
+    { ["msg"] = "READ THE FILE IN THE DOCUMENTS DIRECTORY WITH 'READ <FILENAME>'.", ["trigger"] = "read" },
+    { ["msg"] = "EDIT THE FILE WITH 'EDIT <FILENAME>' AND PRESS ESCAPE TO SAVE AND QUIT.", ["trigger"] = "edit" },
+    { ["msg"] = "NOW YOU KNOW THE BASICS OF THE FILESYSTEM. RUN 'CONTINUE' TO CONTINUE.", ["trigger"] = "continue" },
+    { ["msg"] = "USE 'DISCONNECT' TO DISCONNECT FROM THE SYSTEM AND RETURN TO YOUR\nSTARTING MACHINE, ALSO CALLED THE ROOT MACHINE.", ["trigger"] = "disconnect" },
+    { ["msg"] = "RUN 'LISTSYS' TO GET A LIST OF ALL THE SYSTEMS YOU HAVE USED 'PROBE' ON.", ["trigger"] = "listsys" },
+    { ["msg"] = "YOU CAN USE 'CONNECT <IP>' TO CONNECT TO ANY SYSTEM THAT YOU HAVE AN\nACCOUNT ON, INCLUDING YOUR ROOT MACHINE.", ["trigger"] = "connect" },
+    { ["msg"] = "THAT CONCLUDES THE TUTORIAL, EXPLORE OTHER COMMANDS WITH 'HELP', READ THE\nMANUAL WITH 'MAN' AND CHECK YOUR MAIL. RUN CONTINUE TO FINISH.", ["trigger"] = "continue" }
+}
+local tutorial = false
+local nextTutorial = false
+local tutorialListener = ""
 local progStack = Stack.new()
 local programs = {
     ["adduser"] = dofile("adduser.lua"),
@@ -25,6 +48,7 @@ local programs = {
     ["chown"] = dofile("chown.lua"),
     ["color"] = dofile("color.lua"),
     ["connect"] = dofile("connect.lua"),
+    ["continue"] = dofile("continue.lua"),
     ["cp"] = dofile("cp.lua"),
     ["deluser"] = dofile("deluser.lua"),
     ["delnote"] = dofile("delnote.lua"),
@@ -33,6 +57,7 @@ local programs = {
     ["hack"] = dofile("hack.lua"),
     ["kill"] = dofile("kill.lua"),
     ["listusers"] = dofile("listusers.lua"),
+    ["listsys"] = dofile("listsys.lua"),
     ["login"] = dofile("login.lua"),
     ["ls"] = dofile("ls.lua"),
     ["mail"] = dofile("mail.lua"),
@@ -61,6 +86,7 @@ function Terminal:newGame()
     Systems = DefaultSystems
     Settings = DefaultSettings
     Env = DefaultEnv
+    PlayerInfo = DefaultPlayerInfo
 
     for ip,sys in pairs(Systems) do
         if not CC:hasProcessWithPID(ip, 0) then CC:startProcess(ip, "ROOT", 0) end
@@ -69,8 +95,14 @@ function Terminal:newGame()
     end
 
     -- Send inital mail to user
-    CC:sendMail("WELCOME", "THIS GAME IS AWESOME", "GAMEMASTER")
-    CC:sendMail("FIRST THINGS FIRST", "ALSO... YOU ARE CUTE :>", "GAMEMASTER")
+    CC:sendMail("YOU'RE WELCOME",
+    "HI! I SET UP THE TEST COMPUTER PER YOUR REQUEST. I LEFT PORT 21 OPEN,\n" ..
+    "YOU SHOULD BE ABLE TO GET IN.\n" ..
+    "I'LL TALK TO YOU LATER.\n" ..
+    "- R33T", "R33T")
+
+    tutorial = true
+    tutorialListener = tutorialMsg[1].trigger
 end
 
 function Terminal:continueGame()
@@ -93,6 +125,8 @@ function Terminal:start()
 end
 
 function Terminal:runProg(name, args)
+    if tutorial and name == tutorialListener then nextTutorial = true end
+
     if programs[name] then
         for i = 1, args and #args or 0, 1 do
             local arg = args[i]
@@ -107,6 +141,7 @@ function Terminal:runProg(name, args)
         Stack.push(progStack, programs[name])
         Stack.peek(progStack).args = args
         Stack.peek(progStack):onEnter()
+
         return true
     else
         return false
@@ -120,6 +155,21 @@ function Terminal:endProg(retCode, retStr)
         self.returnCode = retCode or 0
         self.returnStr = retStr or ""
         if #progStack > 0 then Stack.peek(progStack):onResume() end
+    end
+
+    if tutorial and nextTutorial and (retCode == nil or retCode == 0) then
+        table.remove(tutorialMsg, 1)
+        nextTutorial = false
+        if #tutorialMsg > 0 then
+            tutorialListener = tutorialMsg[1].trigger
+        else
+            tutorial = false
+            Settings.showNotes = "true"
+            CC:sendMail("JOIN CTF",
+                "HEY, I SAW THAT YOU GOT INTO THE TEST COMPUTER, GOOD. I FOUND A CTF (CAPTURE THE\n" ..
+                "FLAG) CHALLENGE, IF YOU WANT TO JOIN: 192.168.1.3\n" ..
+                "- R33T", "R33T")
+        end
     end
 end
 
@@ -135,6 +185,19 @@ end
 function Terminal:drawBanner()
     love.graphics.setColor(Systems[Terminal.ip].color)
     love.graphics.printf("-== PROPERTY OF " .. Systems[Terminal.ip].owner .. " ==-", 0, 16, love.graphics.getWidth(), "center")
+end
+
+function Terminal:drawTutorialMessage()
+    if tutorial then
+        local color = { }
+        for i = 1, #Systems[Terminal.ip].color, 1 do color[i] = Systems[Terminal.ip].color[i] * 0.5 end
+        love.graphics.setColor(color)
+        love.graphics.setFont(Fonts["bold-16"])
+        love.graphics.rectangle("fill", 30, love.graphics.getHeight() - 138, love.graphics.getWidth() - 64, 64)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.print(tutorialMsg[1].msg, 38, love.graphics.getHeight() - 130)
+        love.graphics.setColor(Systems[Terminal.ip].color)
+    end
 end
 
 function Terminal:keypressed(key)

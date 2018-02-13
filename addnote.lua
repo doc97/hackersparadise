@@ -23,7 +23,7 @@ function program:onEnter()
         formattedStr[#formattedStr + 1] = string.sub(s, 1, i)
         if i < string.len(s) then formattedStr[#formattedStr + 1] = string.sub(s, i + 1) end
 
-        local notes = Systems[Terminal.rootIp].notes
+        local notes = PlayerInfo.notes
         notes[#notes + 1] = table.concat(formattedStr, "\n")
         Terminal:endProg(0, "NOTE ADDED")
     end

@@ -33,6 +33,7 @@ function program:onEnter()
             strBuf[#strBuf + 1] = "NONE"
         end
 
+        CC:addSystem(self.args[1])
         Terminal:endProg(0, table.concat(strBuf))
     end
 end

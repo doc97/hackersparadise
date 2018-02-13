@@ -19,13 +19,14 @@ HACK - ATTACKS A PORT ON A TARGET SYSTEM
 HELP - SHOWS THIS HELP
 KILL - KILL A PROCESS
 LISTUSERS - LIST USERS ON THE SYSTEMS
+LISTSYS - LIST SYSTEMS YOU HAVE DISCOVERED
+LOGOUT - LOG OUT (RETURN TO MAIN MENU)
 LS - LIST CURRENT DIRECTORY
 MAIL - VIEW MAIL INBOX
 MAN - OPENS THE MANUAL
 MKDIR - MAKE NEW DIRECTORY
 MV - MOVE FILE OR DIRECTORY
 NOTES - TOGGLE SHOWING NOTES
-LOGOUT - LOG OUT (RETURN TO MAIN MENU)
 PASSWD - CHANGE PASSWORD ON THE SYSTEM
 PROBE - GATHER INFORMATION ABOUT SYSTEM
 PS - LIST PROCESSES
@@ -137,7 +138,7 @@ function program:draw()
 
         love.graphics.setFont(Fonts["bold-12"])
         local y = 120
-        for i,note in ipairs(Systems[Terminal.rootIp].notes) do
+        for i,note in ipairs(PlayerInfo.notes) do
             local str = i .. ": " .. note
             local rows = 1
             for match in string.gmatch(str, "\n") do rows = rows + 1 end
@@ -159,6 +160,7 @@ function program:draw()
     love.graphics.print(navInstructions, 32, love.graphics.getHeight() - 32)
     love.graphics.setColor(Systems[Terminal.ip].color)
 
+    Terminal:drawTutorialMessage()
 end
 
 function program:keypressed(key)

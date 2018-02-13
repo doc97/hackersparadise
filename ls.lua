@@ -11,7 +11,7 @@ function program:onEnter()
         end
     end
 
-    local strBuf = { "LIST OF FILES\n-------------\n" }
+    local strBuf = { "LISTING OF '" .. dirPath .. "'\n-------------\n" }
 
     for k,v in pairs(dir) do
         strBuf[#strBuf + 1] = string.upper(k)

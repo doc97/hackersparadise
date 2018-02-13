@@ -3,10 +3,6 @@ CC = {
     ["ids"] = { }
 }
 
-Env = { }
-DefaultEnv = {
-    ["reboot"] = { }
-}
 
 -- IDS
 function CC:isBeingDetectedBy(ipaddr)
@@ -79,14 +75,19 @@ end
 
 -- Mail
 function CC:sendMail(subj, msg, sender)
-    local cnt = #Systems[Terminal.rootIp].mail
-    Systems[Terminal.rootIp].mail[cnt + 1] = {
+    local mail = PlayerInfo.mail
+    mail[#mail + 1] = {
         ["source"] = src,
         ["destination"] = dest,
         ["subject"] = subj,
         ["message"] = msg,
         ["sender"] = sender
     }
+end
+
+-- Other
+function CC:addSystem(ipaddr)
+    PlayerInfo.knownSystems[ipaddr] = true
 end
 
 function CC:update(dt)

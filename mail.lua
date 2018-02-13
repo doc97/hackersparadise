@@ -18,7 +18,7 @@ function program:onEnter()
     outBuf = {}
     contents = {}
 
-    for i,mail in ipairs(Systems[Terminal.rootIp].mail) do
+    for i,mail in ipairs(PlayerInfo.mail) do
         local strBuf = { }
         strBuf[#strBuf + 1] = i
         strBuf[#strBuf + 1] = ": "
