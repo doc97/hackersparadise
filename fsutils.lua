@@ -6,7 +6,7 @@ end
 local function resolvePath(path, str)
     local res = path and string.upper(path) or ""
     local c = str and string.upper(str) or ""
-    while #c > 0 do
+    while string.len(c) > 0 do
         local n, m = string.find(c, "^/?[^/]+")
         if n == nil then break end
 
