@@ -1,15 +1,36 @@
 local program = { args = {} }
+program.lines = {}
+program.scriptArgs = {}
+program.context = {}
+program.returnVal = ""
 
-local cmds = {}
-local args = {}
+function exec(inputStr)
+    local s = {}
+    for match in string.gmatch(inputStr, "%g+") do table.insert(s, match) end
 
-function program:nextProg()
-    if #cmds == 0 then
-        Terminal:endProg(0, Terminal.returnStr .. "\nSCRIPT FINISHED")
+    local cmd = s[1]
+    local args = {}
+    for i = 2, #s, 1 do args[#args + 1] = s[i] end
+    Terminal:runProg(cmd, args)
+end
+
+function program:exec_line(line)
+    if not line then return end
+
+    local script, err = load(string.lower(line), nil, "t", self.context)
+    if not script then
+        Terminal:endProg(-1, "SYNTAX ERROR: " .. string.upper(err))
     else
-        local cmd = table.remove(cmds, 1)
-        local arg = table.remove(args, 1)
-        Terminal:runProg(string.lower(cmd), arg)
+        local ok, retVal = pcall(script, unpack(self.scriptArgs))
+        if ok then
+            returnVal = retVal
+            if #self.lines == 0 then
+                Terminal:endProg(0, string.upper(returnVal or ""))
+            end
+        else
+            Terminal:clearQueue()
+            Terminal:endProg(-1, "RUNTIME ERROR: " .. string.upper(retVal))
+        end
     end
 end
 
@@ -21,37 +42,44 @@ function program:onEnter()
         if not file then
             Terminal:endProg(-1, "NO SUCH FILE EXISTS")
         else
-            cmds = {}
-            args = {}
-            for line in string.gmatch(file, "[^\n]+") do
-                local s = {}
-                for word in string.gmatch(line, "%g+") do s[#s + 1] = word end
-                cmds[#cmds + 1] = s[1]
-                table.remove(s, 1)
-                args[#args + 1] = s
+            self.lines = {}
+            self.context = {}
+            self.context.exec = exec
+            self.context.getoutput = function() return Terminal.returnStr end
+            self.context.getexitcode = function() return Terminal.returnCode end
+            self.context.string = string
+            self.context.tonumber = tonumber
+            self.context.ipairs = ipairs
+            self.context.print = print
+
+            self.scriptArgs = {}
+            for i = 2, #self.args, 1 do self.scriptArgs[i - 1] = self.args[i] end
+
+            for line in string.gmatch(file, "[^;]+;") do
+                self.lines[#self.lines + 1] = string.sub(line, 1, -2)
             end
 
-            if #cmds == 0 then
-                Terminal:endProg(0, "")
+            if #self.lines > 0 then
+                self:exec_line(table.remove(self.lines, 1))
             else
-                self:nextProg()
+                Terminal:endProg()
             end
         end
     end
 end
 
-function program:onResume()
-    if Terminal.returnCode ~= 0 then
-        Terminal:endProg(-1, Terminal.returnStr .. "\n--\nSCRIPT ABORTED!")
+function program:update(dt)
+    if #self.lines > 0 then
+        self:exec_line(table.remove(self.lines, 1))
     else
-        self:nextProg()
+        Terminal:endProg(0, string.upper(returnVal or ""))
     end
 end
 
 -- Unused
 function program:onExit() end
+function program:onResume() end
 function program:onPause() end
-function program:update(dt) end
 function program:draw() end
 function program:keypressed(key) end
 function program:textinput(key) end
