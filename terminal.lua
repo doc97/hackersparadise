@@ -38,6 +38,7 @@ local tutorialMsg = {
 local tutorial = false
 local nextTutorial = false
 local tutorialListener = ""
+local progQueue = {}
 local progStack = Stack.new()
 local programs = {
     ["adduser"] = dofile("adduser.lua"),
@@ -124,9 +125,7 @@ function Terminal:start()
     Terminal:runProg("boot")
 end
 
-function Terminal:runProg(name, args)
-    if tutorial and name == tutorialListener then nextTutorial = true end
-
+function Terminal:executeProg(name, args)
     if programs[name] then
         for i = 1, args and #args or 0, 1 do
             local arg = args[i]
@@ -141,11 +140,18 @@ function Terminal:runProg(name, args)
         Stack.push(progStack, programs[name])
         Stack.peek(progStack).args = args
         Stack.peek(progStack):onEnter()
-
-        return true
-    else
-        return false
     end
+end
+
+function Terminal:runProg(name, args)
+    if tutorial and name == tutorialListener then nextTutorial = true end
+
+    if #progQueue == 0 then
+        self:executeProg(name, args)
+    else
+        self:queueProg(name, args)
+    end
+    return true
 end
 
 function Terminal:endProg(retCode, retStr)
@@ -154,23 +160,45 @@ function Terminal:endProg(retCode, retStr)
         Stack.pop(progStack)
         self.returnCode = retCode or 0
         self.returnStr = retStr or ""
-        if #progStack > 0 then Stack.peek(progStack):onResume() end
-    end
 
-    if tutorial and nextTutorial and (retCode == nil or retCode == 0) then
-        table.remove(tutorialMsg, 1)
-        nextTutorial = false
-        if #tutorialMsg > 0 then
-            tutorialListener = tutorialMsg[1].trigger
+        if tutorial and nextTutorial and (retCode == nil or retCode == 0) then
+            table.remove(tutorialMsg, 1)
+            nextTutorial = false
+            if #tutorialMsg > 0 then
+                tutorialListener = tutorialMsg[1].trigger
+            else
+                tutorial = false
+                Settings.showNotes = "true"
+                CC:sendMail("JOIN CTF",
+                    "HEY, I SAW THAT YOU GOT INTO THE TEST COMPUTER, GOOD. I FOUND A CTF (CAPTURE THE\n" ..
+                    "FLAG) CHALLENGE, IF YOU WANT TO JOIN: 192.168.1.3\n" ..
+                    "- R33T", "R33T")
+            end
+        end
+
+        if #progQueue == 0 then
+            if #progStack > 0 then Stack.peek(progStack):onResume() end
         else
-            tutorial = false
-            Settings.showNotes = "true"
-            CC:sendMail("JOIN CTF",
-                "HEY, I SAW THAT YOU GOT INTO THE TEST COMPUTER, GOOD. I FOUND A CTF (CAPTURE THE\n" ..
-                "FLAG) CHALLENGE, IF YOU WANT TO JOIN: 192.168.1.3\n" ..
-                "- R33T", "R33T")
+            self:runNextInQueue()
         end
     end
+end
+
+function Terminal:queueProg(name, args)
+    progQueue[#progQueue + 1] = { cmd = name, args = args }
+end
+
+function Terminal:clearQueue()
+    progQueue = {}
+end
+
+function Terminal:runNextInQueue()
+    if #progQueue > 0 then
+        local program = table.remove(progQueue, 1)
+        self:executeProg(program.cmd, program.args)
+        return true
+    end
+    return false
 end
 
 function Terminal:update(dt)
