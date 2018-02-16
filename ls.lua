@@ -2,7 +2,7 @@ local program = { args = {} }
 local getDirectory = getDirectory
 
 function program:onEnter()
-    local dir, dirPath = Terminal.workingDir, Terminal.workingDirPath
+    local dir, dirPath = Terminal.workingDir, { Terminal.workingDirPath }
     if #self.args > 0 then
         dir, dirPath = getDirectory(Terminal.ip, Terminal.workingDirPath, self.args[1])
         if not dir then
@@ -11,7 +11,7 @@ function program:onEnter()
         end
     end
 
-    local strBuf = { "LISTING OF '" .. dirPath .. "'\n-------------\n" }
+    local strBuf = { "LISTING OF '" .. table.concat(dirPath) .. "'\n-------------\n" }
 
     for k,v in pairs(dir) do
         strBuf[#strBuf + 1] = string.upper(k)

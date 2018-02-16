@@ -54,11 +54,13 @@ end
 function program:keypressed(key)
     if key == "backspace" then
         if cursorPos == 1 then
-            local rest = string.sub(content[editLine], cursorPos)
-            table.remove(content, editLine)
-            editLine = math.max(1, editLine - 1)
-            cursorPos = string.len(content[editLine]) + 1
-            content[editLine] = content[editLine] .. rest
+            if editLine > 1 then
+                local rest = string.sub(content[editLine], cursorPos)
+                table.remove(content, editLine)
+                editLine = math.max(1, editLine - 1)
+                cursorPos = string.len(content[editLine]) + 1
+                content[editLine] = content[editLine] .. rest
+            end
         else
             local lineStr = content[editLine]
             content[editLine] = string.sub(lineStr, 1, cursorPos - 2) .. string.sub(lineStr, cursorPos)
@@ -87,7 +89,8 @@ function program:keypressed(key)
 end
 
 function program:textinput(key)
-    content[editLine] = content[editLine] .. string.upper(key)
+    local lineStr = content[editLine]
+    content[editLine] = string.sub(lineStr, 1, cursorPos - 1) .. string.upper(key) .. string.sub(lineStr, cursorPos)
     cursorPos = cursorPos + 1
 end
 

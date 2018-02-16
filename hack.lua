@@ -49,6 +49,8 @@ function program:update(dt)
         step = 0
         if math.random(100) > Systems[ip].firewall then
             Terminal.ip = ip
+            Terminal.workingDir = Systems[ip].fs
+            Terminal.workingDirPath = "/"
             for key,_ in pairs(Systems[ip].accounts) do
                 Terminal.username = key
                 break

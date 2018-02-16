@@ -1,11 +1,11 @@
 local function getParentDirectoryPath(path)
-    local index = string.find(path, "/[^/]+/?$") or 1
+    local index = string.find(path and string.upper(path) or "", "/[^/]+/?$") or 1
     return string.sub(path, 1, index)
 end
 
 local function resolvePath(path, str)
-    local res = "" .. path or ""
-    local c = "" .. str or ""
+    local res = path and string.upper(path) or ""
+    local c = str and string.upper(str) or ""
     while #c > 0 do
         local n, m = string.find(c, "^/?[^/]+")
         if n == nil then break end
