@@ -1,0 +1,9 @@
+# Vim
+*.swp
+*.swo
+
+# Other
+*.md
+*.bak
+
+*.love
