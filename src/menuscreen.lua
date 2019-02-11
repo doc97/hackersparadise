@@ -5,19 +5,15 @@ local continue = false
 local selection = 1
 local fontHeight = 0
 
-local texts = { "EXIT", "CREDITS", "NEW GAME", "CONTINUE" }
+local texts = { "EXIT", "NEW GAME", "CONTINUE" }
 local selections = { }
 
 function screen:onEnter()
     fontHeight = 1.5 * 24
 
-    selections = { true, false, true, false }
-    selections[4] = love.filesystem.getInfo("systems-save.lua") ~= nil
-    selection = selections[4] and 4 or 3
-	
-	if selections[4] then
-		love.filesystem.getInfo("systems-save.lua")
-	end
+    selections = { true, true, false }
+    selections[3] = love.filesystem.getInfo("systems-save.lua") ~= nil
+    selection = selections[3] and 3 or 2
 end
 
 function screen:onExit()
@@ -36,8 +32,8 @@ function screen:draw()
     love.graphics.setFont(Fonts["bold-24"])
     love.graphics.printf("(WORKING TITLE)", 0, 180, love.graphics.getWidth(), "center")
 
-    love.graphics.rectangle("fill", 40, love.graphics.getHeight() - 96 - (selection - 1) * fontHeight, 10, fontHeight)
-    love.graphics.rectangle("fill", 60, love.graphics.getHeight() - 96 - (selection - 1) * fontHeight, 240, fontHeight)
+    love.graphics.rectangle("fill", 40, love.graphics.getHeight() - 96 - selection * fontHeight, 10, fontHeight)
+    love.graphics.rectangle("fill", 60, love.graphics.getHeight() - 96 - selection * fontHeight, 240, fontHeight)
 
     love.graphics.setColor(1, 1, 1)
     for i = #texts, 1, -1 do
@@ -46,24 +42,29 @@ function screen:draw()
 		else love.graphics.setColor(1, 1, 1)
         end
 		
-        love.graphics.print(texts[i], 64, love.graphics.getHeight() - 96 - (i - 1) * fontHeight)
+        love.graphics.print(texts[i], 64, love.graphics.getHeight() - 96 - i * fontHeight)
     end
+
+    love.graphics.setFont(Fonts["bold-12"])
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("(C) DANIEL RIISSANEN 2019", -48, love.graphics.getHeight() - 60,
+        love.graphics.getWidth(), "right")
 end
 
 function screen:keypressed(key)
     if key == "return" then
         if selection == 1 then
             love.event.quit()
-        elseif selection == 3 then
+        elseif selection == 2 then
             Terminal:start()
             Terminal:newGame()
             Screens:setScreen("game")
-        elseif selection == 4 then
+        elseif selection == 3 then
             Terminal:start()
             Terminal:continueGame()
             Screens:setScreen("game")
         end
-    elseif key == "up" and selection < 4 then
+    elseif key == "up" and selection < 3 then
         local index = selection
         repeat
             index = index + 1

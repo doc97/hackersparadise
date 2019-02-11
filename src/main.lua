@@ -43,7 +43,6 @@ function love.quit()
     CurrentScreen = nil
 
     -- Save game
-	print(love.filesystem.getIdentity())
     local err = table.save(Systems, "systems-save.lua")
     if err then print("Error: " .. err) end
     err = table.save(Settings, "settings-save.lua")
