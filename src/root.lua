@@ -224,6 +224,7 @@ function program:keypressed(key)
 end
 
 function program:textinput(key)
+	if #key > 1 then return end
     table.insert(input, cursorPos, string.upper(key))
     cursorPos = cursorPos + 1
     inputDirty = true

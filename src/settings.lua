@@ -41,7 +41,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 50, 255, 50 },
+        ["color"] = { 0.2, 1, 0.2 },
         ["firewall"] = 50,
         ["ids"] = 15
     },
@@ -82,7 +82,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 0, 155, 255 },
+        ["color"] = { 0, 0.6, 1 },
         ["firewall"] = 0,
         ["ids"] = 60
     },
@@ -122,7 +122,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 155, 0, 155 },
+        ["color"] = { 0.6, 0, 0.6 },
         ["firewall"] = 10,
         ["ids"] = 25
     },
@@ -163,7 +163,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 255, 0, 255 },
+        ["color"] = { 1, 0, 1 },
         ["firewall"] = 25,
         ["ids"] = 15
     },
@@ -204,7 +204,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 0, 255, 255 },
+        ["color"] = { 0, 1, 1 },
         ["firewall"] = 40,
         ["ids"] = 10
     },
@@ -249,7 +249,7 @@ DefaultSystems = {
             ["0"] = "ROOT"
         },
         ["route"] = "",
-        ["color"] = { 0, 255, 255 },
+        ["color"] = { 0, 1, 1 },
         ["firewall"] = 40,
         ["ids"] = 10
     }

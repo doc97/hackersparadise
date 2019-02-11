@@ -6,4 +6,8 @@
 *.md
 *.bak
 
+# Love2D
 *.love
+
+# Build
+build/

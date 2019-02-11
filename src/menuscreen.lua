@@ -12,8 +12,12 @@ function screen:onEnter()
     fontHeight = 1.5 * 24
 
     selections = { true, false, true, false }
-    selections[4] = love.filesystem.exists("systems-save.lua")
+    selections[4] = love.filesystem.getInfo("systems-save.lua") ~= nil
     selection = selections[4] and 4 or 3
+	
+	if selections[4] then
+		love.filesystem.getInfo("systems-save.lua")
+	end
 end
 
 function screen:onExit()
@@ -26,7 +30,7 @@ end
 
 function screen:draw()
     love.graphics.setFont(Fonts["bold-48"])
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.printf("HACKER'S PARADISE", 0, 100, love.graphics.getWidth(), "center")
 
     love.graphics.setFont(Fonts["bold-24"])
@@ -35,13 +39,14 @@ function screen:draw()
     love.graphics.rectangle("fill", 40, love.graphics.getHeight() - 96 - (selection - 1) * fontHeight, 10, fontHeight)
     love.graphics.rectangle("fill", 60, love.graphics.getHeight() - 96 - (selection - 1) * fontHeight, 240, fontHeight)
 
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     for i = #texts, 1, -1 do
         if selection == i then love.graphics.setColor(0, 0, 0)
-        elseif not selections[i] then love.graphics.setColor(100, 100, 100)
+        elseif not selections[i] then love.graphics.setColor(0.4, 0.4, 0.4)
+		else love.graphics.setColor(1, 1, 1)
         end
+		
         love.graphics.print(texts[i], 64, love.graphics.getHeight() - 96 - (i - 1) * fontHeight)
-        love.graphics.setColor(255, 255, 255)
     end
 end
 

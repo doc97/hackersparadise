@@ -111,6 +111,7 @@ function CC:update(dt)
     end
 
     -- Rebooting systems
+	if not Env.reboot then return end
     for i = 1, #Env.reboot, 1 do
         local sys = Env.reboot[i]
         if not getFile(sys.ip, "/", "BOOT/BOOT.CFG") or not getFile(sys.ip, "/", "BOOT/SYSTEM.IMG") then

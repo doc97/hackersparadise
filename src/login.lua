@@ -53,7 +53,7 @@ end
 
 function program:draw()
     love.graphics.setFont(Fonts["bold-16"])
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     if authFailed then
         love.graphics.printf("** INCORRECT LOGIN, ACCESS DENIED **", 0, 66, love.graphics.getWidth(), "center")
     elseif sysOffline then
@@ -103,6 +103,7 @@ function program:keypressed(key)
 end
 
 function program:textinput(key)
+	if #key > 1 then return end
     if authFailed or sysOffline then return end
     cmd = cmd .. (usernameEntered and "*" or string.upper(key))
     passwd = usernameEntered and passwd .. string.upper(key) or ""

@@ -14,6 +14,7 @@ function love.load()
     Fonts["bold-24"] = love.graphics.newFont("assets/8bit-Bold.ttf", 24)
     Fonts["bold-48"] = love.graphics.newFont("assets/8bit-Bold.ttf", 48)
 
+	love.filesystem.setIdentity("hackersparadise")
     love.window.setTitle("Hacker's paradise")
     love.keyboard.setKeyRepeat(true)
 
@@ -42,6 +43,7 @@ function love.quit()
     CurrentScreen = nil
 
     -- Save game
+	print(love.filesystem.getIdentity())
     local err = table.save(Systems, "systems-save.lua")
     if err then print("Error: " .. err) end
     err = table.save(Settings, "settings-save.lua")
