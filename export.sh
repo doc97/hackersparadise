@@ -2,7 +2,7 @@
 
 NAME=HackersParadise
 OUTPUT_DIR=build/output
-EXPORT_DIR=build/export
+EXPORT_DIR=build/${NAME}
 ZIP_DIR=build/zip
 ZIP_NAME=${NAME}-$(date +%d-%b-%Y).zip
 
@@ -12,7 +12,7 @@ echo "----"
 echo "Creating .love file..."
 mkdir -p ${EXPORT_DIR}
 cd ${OUTPUT_DIR}
-zip -9 -r ../../${EXPORT_DIR}/${NAME}.love * 1>/dev/null
+zip -9 -qur ../../${EXPORT_DIR}/${NAME}.love *
 cd ../..
 
 echo "Creating .exe file..."
@@ -26,7 +26,10 @@ echo "Copying README..."
 cp include/README.txt ${EXPORT_DIR}
 
 echo "Zipping folder..."
-zip -9 -r ${ZIP_DIR}/${ZIP_NAME} ${EXPORT_DIR}/ 1>/dev/null
+mkdir -p ${ZIP_DIR}
+cd build
+zip -9 -qur ../${ZIP_DIR}/${ZIP_NAME} ${NAME}/
+cd ..
 
 echo "Done."
 echo
