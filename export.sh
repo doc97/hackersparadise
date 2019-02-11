@@ -18,3 +18,5 @@ cat love/love.exe ${EXPORT_DIR}/${NAME}.love > ${EXPORT_DIR}/${NAME}.exe
 cp love/* ${EXPORT_DIR}/
 
 echo "Done."
+echo
+echo "The build can be found at: ${EXPORT_DIR}/${NAME}.exe"
